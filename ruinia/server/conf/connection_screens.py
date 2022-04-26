@@ -24,15 +24,15 @@ from django.conf import settings
 from evennia import utils
 
 CONNECTION_SCREEN = """
-|b==============================================================|n
+|b===========================================================================================|n
  Welcome to |g{}|n, version {}!
 
- If you have an existing account, connect to it by typing:
-      |wconnect <username> <password>|n
- If you need to create an account, type (without the <>'s):
-      |wcreate <username> <password>|n
+Если у вас уже есть существующий аккаунт, то подключитесь с помощью:
+      |wвойти <логин> <пароль>|n
+ Если вы играете впервые, то создайти аккаунт с помощью:
+      |wсоздать <логин> <пароль>|n
 
- Enter |whelp|n for more info. |wlook|n will re-show this screen.
-|b==============================================================|n""".format(
+ Введите |wсправка|n для получения справки. |wсмотреть|n чтобы увидеть текущий экран еще раз.
+|b===========================================================================================|n""".format(
     settings.SERVERNAME, utils.get_evennia_version("short")
 )
