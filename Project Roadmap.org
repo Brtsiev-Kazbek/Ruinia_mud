@@ -1,8 +1,0 @@
-#+title:
-Project Roadmap
-
-* Ruinia Roadmap
-
-** Введение
-
-Ruinia - многопользовательская текстовая ролевая игра.
