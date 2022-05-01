@@ -4,7 +4,7 @@
 # The keys None and "you" must always exist.
 SYMBOLS = {None: ' . ',  # for rooms without a sector_type attr
            'you': '[@]',
-           'SECT_INSIDE': '[.]'}
+           'Forest': '[|gφ|n]'}
 
 
 class Map(object):
