@@ -63,7 +63,8 @@ class Room(DefaultRoom):
         if desc:
             string += "%s" % desc
         if exits:
-            string += "\n|wВыходы:|n " + list_to_string(exits)
+            string += "\n|wВыходы:|n " + list_to_string(exits, "и")
+            print(exits)
         if users or things:
             # handle pluralization of things (never pluralize users)
             thing_strings = []

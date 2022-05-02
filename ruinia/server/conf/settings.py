@@ -32,8 +32,19 @@ from evennia.settings_default import *
 ######################################################################
 
 # This is the name of your game. Make it catchy!
-SERVERNAME = "ruinia"
+SERVERNAME = "Ruinia"
 
+# Time
+from datetime import datetime
+import time
+start = datetime(4000, 1, 1)
+
+TIME_FACTOR = 10.0
+
+TIME_GAME_EPOCH = time.mktime(start.timetuple())
+
+
+print(TIME_GAME_EPOCH)
 
 ######################################################################
 # Settings given in secret_settings.py override those in this file.
