@@ -7,6 +7,7 @@ Rooms are simple containers that has no location of their own.
 
 from evennia import DefaultRoom
 from evennia.utils.utils import list_to_string
+from evennia.utils import evtable
 
 from collections import defaultdict
 
@@ -26,10 +27,17 @@ class Room(DefaultRoom):
 
     def return_appearance(self, looker):
         # [...]
-        string = "%s\n" % Map(looker).show_map()
+         # string = "%s\n" % Map(looker).show_map()
         # Add all the normal stuff like room description,
         # contents, exits etc.
-        string += "\n" + self._return_raw_appearance(looker)
+         # string += "\n" + self._return_raw_appearance(looker)
+
+        local_map = evtable.wrap(Map(looker).show_map())
+        location_appearance = evtable.wrap(self._return_raw_appearance(looker))
+
+        string = evtable.EvTable("Локальная карта", "Описание", table = [local_map, location_appearance], border = "rows")
+
+        print(string)
 
         return string
 

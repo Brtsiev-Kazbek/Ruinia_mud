@@ -2,9 +2,7 @@
 
 # These are keys set with the Attribute sector_type on the room.
 # The keys None and "you" must always exist.
-SYMBOLS = {None: ' . ',  # for rooms without a sector_type attr
-           'you': '[@]',
-           'Forest': '[|gφ|n]'}
+from world.map_legend import SYMBOLS
 
 
 class Map(object):
