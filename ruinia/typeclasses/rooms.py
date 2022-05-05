@@ -27,20 +27,12 @@ class Room(DefaultRoom):
 
     def return_appearance(self, looker):
         # [...]
-         # string = "%s\n" % Map(looker).show_map()
+        string = "%s\n" % Map(looker).show_map()
         # Add all the normal stuff like room description,
         # contents, exits etc.
-         # string += "\n" + self._return_raw_appearance(looker)
-
-        local_map = evtable.wrap(Map(looker).show_map())
-        location_appearance = evtable.wrap(self._return_raw_appearance(looker))
-
-        string = evtable.EvTable("Локальная карта", "Описание", table = [local_map, location_appearance], border = "rows")
-
-        print(string)
+        string += "\n" + self._return_raw_appearance(looker)
 
         return string
-
 
     def _return_raw_appearance(self, looker):
         """
@@ -54,7 +46,8 @@ class Room(DefaultRoom):
         if not looker:
             return ""
         # get and identify all objects
-        visible = (con for con in self.contents if con != looker and con.access(looker, "view"))
+        visible = (con for con in self.contents if con !=
+                   looker and con.access(looker, "view"))
         exits, users, things = [], [], defaultdict(list)
         for con in visible:
             key = con.get_display_name(looker)
@@ -79,16 +72,17 @@ class Room(DefaultRoom):
             for key, itemlist in sorted(things.items()):
                 nitem = len(itemlist)
                 if nitem == 1:
-                    key, _ = itemlist[0].get_numbered_name(nitem, looker, key=key)
+                    key, _ = itemlist[0].get_numbered_name(
+                        nitem, looker, key=key)
                 else:
                     key = [item.get_numbered_name(nitem, looker, key=key)[1] for item in itemlist][
                         0
                     ]
                 thing_strings.append(key)
 
-            string += "\n|wВы видите:|n " + list_to_string(users + thing_strings)
+            string += "\n|wВы видите:|n " + \
+                list_to_string(users + thing_strings)
 
         return string
-
 
     pass

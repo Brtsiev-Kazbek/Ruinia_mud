@@ -25,6 +25,8 @@ put secret game- or server-specific settings in secret_settings.py.
 """
 
 # Use the defaults from Evennia unless explicitly overridden
+import time
+from datetime import datetime
 from evennia.settings_default import *
 
 ######################################################################
@@ -35,13 +37,11 @@ from evennia.settings_default import *
 SERVERNAME = "Ruinia"
 
 # Time
-from datetime import datetime
-import time
 start = datetime(4000, 1, 1)
 
 TIME_FACTOR = 10.0
 
-TIME_GAME_EPOCH = time.mktime(start.timetuple())
+# TIME_GAME_EPOCH = time.mktime(start.timetuple())
 
 
 print(TIME_GAME_EPOCH)
