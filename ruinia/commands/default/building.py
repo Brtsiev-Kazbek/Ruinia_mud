@@ -70,7 +70,6 @@ _DEFAULT_WIDTH = settings.CLIENT_DEFAULT_WIDTH
 _PROTOTYPE_PARENTS = None
 
 
-
 class ObjManipCommand(COMMAND_DEFAULT_CLASS):
     """
     This is a parent class for some of the defining objmanip commands
@@ -111,15 +110,21 @@ class ObjManipCommand(COMMAND_DEFAULT_CLASS):
             for objdef in arglist:
                 aliases, option, attrs = [], None, []
                 if ":" in objdef:
-                    objdef, option = [part.strip() for part in objdef.rsplit(":", 1)]
+                    objdef, option = [part.strip()
+                                      for part in objdef.rsplit(":", 1)]
                 if ";" in objdef:
-                    objdef, aliases = [part.strip() for part in objdef.split(";", 1)]
-                    aliases = [alias.strip() for alias in aliases.split(";") if alias.strip()]
+                    objdef, aliases = [part.strip()
+                                       for part in objdef.split(";", 1)]
+                    aliases = [alias.strip()
+                               for alias in aliases.split(";") if alias.strip()]
                 if "/" in objdef:
-                    objdef, attrs = [part.strip() for part in objdef.split("/", 1)]
-                    attrs = [part.strip().lower() for part in attrs.split("/") if part.strip()]
+                    objdef, attrs = [part.strip()
+                                     for part in objdef.split("/", 1)]
+                    attrs = [part.strip().lower()
+                             for part in attrs.split("/") if part.strip()]
                 # store data
-                obj_defs[iside].append({"name": objdef, "option": option, "aliases": aliases})
+                obj_defs[iside].append(
+                    {"name": objdef, "option": option, "aliases": aliases})
                 obj_attrs[iside].append({"name": objdef, "attrs": attrs})
 
         # store for future access
@@ -127,9 +132,6 @@ class ObjManipCommand(COMMAND_DEFAULT_CLASS):
         self.rhs_objs = obj_defs[1]
         self.lhs_objattr = obj_attrs[0]
         self.rhs_objattr = obj_attrs[1]
-
-
-
 
 
 class CmdDig(ObjManipCommand):
@@ -237,7 +239,8 @@ class CmdDig(ObjManipCommand):
                 )
                 alias_string = ""
                 if new_to_exit.aliases.all():
-                    alias_string = " (%s)" % ", ".join(new_to_exit.aliases.all())
+                    alias_string = " (%s)" % ", ".join(
+                        new_to_exit.aliases.all())
                 exit_to_string = "\nCreated Exit from %s to %s: %s(%s)%s."
                 exit_to_string = exit_to_string % (
                     location.name,
@@ -271,7 +274,8 @@ class CmdDig(ObjManipCommand):
                 )
                 alias_string = ""
                 if new_back_exit.aliases.all():
-                    alias_string = " (%s)" % ", ".join(new_back_exit.aliases.all())
+                    alias_string = " (%s)" % ", ".join(
+                        new_back_exit.aliases.all())
                 exit_back_string = "\nCreated Exit back from %s to %s: %s(%s)%s."
                 exit_back_string = exit_back_string % (
                     new_room.name,
@@ -283,8 +287,6 @@ class CmdDig(ObjManipCommand):
         caller.msg("%s%s%s" % (room_string, exit_to_string, exit_back_string))
         if new_room and "teleport" in self.switches:
             caller.move_to(new_room)
-
-
 
 
 class CmdTunnel(COMMAND_DEFAULT_CLASS):
@@ -386,7 +388,7 @@ class CmdTunnel(COMMAND_DEFAULT_CLASS):
             exitshort += exit_typeclass
             backshort += exit_typeclass
 
-        roomname = "Some place"
+        roomname = "Пустая комната"
         if self.rhs:
             roomname = self.rhs  # this may include aliases; that's fine.
 

@@ -7,7 +7,7 @@ from world.map_legend import SYMBOLS
 
 class Map(object):
 
-    def __init__(self, caller, max_width=9, max_length=9):
+    def __init__(self, caller, max_width=31, max_length=31):
         self.caller = caller
         self.max_width = max_width
         self.max_length = max_length
@@ -71,7 +71,7 @@ class Map(object):
         lst = sorted(range(0, num))
         n = len(lst)
         m = n - 1
-        return (lst[n//2] + lst[m//2]) / 2.0
+        return (lst[n//2] + lst[m//2]) / 2
 
     def start_loc_on_grid(self):
         x = self.median(self.max_width)
@@ -105,6 +105,6 @@ class Map(object):
         map_string = ""
         for row in self.grid:
             map_string += " ".join(row)
-            map_string += "\n"
+            map_string += "\n "
 
         return map_string

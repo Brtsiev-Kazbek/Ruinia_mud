@@ -13,6 +13,8 @@ inheritance.
 from evennia.objects.objects import DefaultObject
 
 
+# TODO: Перевести текст при переходе на другую локацию
+
 class Object(DefaultObject):
     """
     This is the root typeclass object, implementing an in-game Evennia
