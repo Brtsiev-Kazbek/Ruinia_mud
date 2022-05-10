@@ -2,6 +2,7 @@
 Building and world design commands
 """
 from ast import literal_eval as _LITERAL_EVAL
+from msilib.schema import Error
 import re
 from django.conf import settings
 from django.db.models import Q, Min, Max
@@ -24,6 +25,8 @@ from evennia.utils.evmore import EvMore
 from evennia.prototypes import spawner, prototypes as protlib, menus as olc_menus
 from evennia.utils.ansi import raw as ansi_raw
 from evennia.utils.inlinefuncs import raw as inlinefunc_raw
+
+from typeclasses.rooms import Room
 
 COMMAND_DEFAULT_CLASS = class_from_module(settings.COMMAND_DEFAULT_CLASS)
 
@@ -227,6 +230,53 @@ class CmdDig(ObjManipCommand):
                 typeclass = to_exit["option"]
                 if not typeclass:
                     typeclass = settings.BASE_EXIT_TYPECLASS
+
+                print(to_exit)
+
+                # Система координат
+                if(location.name == "Limbo"):
+                    # y = -1 потому что выход из Лимбо направлен на север
+                    current_x, current_y, current_z = 0, -1, 0
+                else:
+                    current_x, current_y, current_z = location.x, location.y, location.z
+
+                print(current_x, current_y, current_z)
+                # Изменяем предполагаемые коорднинаты для новой локации координаты локации
+                if(to_exit["name"] == "север"):
+                    current_y = current_y + 1
+                elif(to_exit["name"] == "юг"):
+                    current_y = current_y - 1
+                elif(to_exit["name"] == "запад"):
+                    current_x = current_x - 1
+                elif(to_exit["name"] == "восток"):
+                    current_x = current_x + 1
+                elif(to_exit["name"] == "северо-восток"):
+                    current_x = current_x + 1
+                    current_y = current_y + 1
+                elif(to_exit["name"] == "юго-восток"):
+                    current_x = current_x + 1
+                    current_y = current_y - 1
+                elif(to_exit["name"] == "юго-запад"):
+                    current_x = current_x - 1
+                    current_y = current_y - 1
+                elif(to_exit["name"] == "северо-запад"):
+                    current_x = current_x - 1
+                    current_y = current_y + 1
+                elif(to_exit["name"] == "вверх"):
+                    current_z = current_z + 1
+                elif(to_exit["name"] == "вниз"):
+                    current_z = current_z - 1
+
+                # Проверяем, есть ли комната с такими координатами.
+                # Если есть, то сообщаем об этом пользователю
+                if(Room.get_room_at(current_x, current_y, current_z) is not None):
+                    caller.msg(
+                        f"|RКординаты {current_x, current_y, current_z} уже используются. Пожалуйста, найдите другое место, либо удалите локацию.|n")
+                    return
+                else:
+                    new_room.x = current_x
+                    new_room.y = current_y
+                    new_room.z = current_z
 
                 new_to_exit = create.create_object(
                     typeclass,
