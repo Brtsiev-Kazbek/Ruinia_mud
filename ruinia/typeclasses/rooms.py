@@ -5,8 +5,10 @@ Rooms are simple containers that has no location of their own.
 
 """
 
+import datetime
 from math import sqrt
 from evennia import DefaultRoom
+from evennia.utils.gametime import gametime
 from evennia.utils.utils import list_to_string
 
 from collections import defaultdict
@@ -26,10 +28,17 @@ class Room(DefaultRoom):
     """
 
     def return_appearance(self, looker):
+
+        # Получаем значение игрового времени
+        game_time = int(gametime(absolute=True))
+        formatted_game_time = str(datetime.datetime.fromtimestamp(game_time))
+
         # [...]
         string = "\n %s\n" % Map(looker).show_map()
 
-        # string += f"|Y DELETE ME (x: {self.x}, y: {self.y}, z: {self.z})|n"
+        string += f'{formatted_game_time} '
+        string += f"(x: {self.x}, y: {self.y}, z: {self.z})"
+
         # Add all the normal stuff like room description,
         # contents, exits etc.
         string += "\n" + \
@@ -84,7 +93,7 @@ class Room(DefaultRoom):
                 thing_strings.append(key)
 
             string += "\n|wВы видите:|n " + \
-                list_to_string(users + thing_strings)
+                list_to_string(users + thing_strings, "и")
 
         return string
 

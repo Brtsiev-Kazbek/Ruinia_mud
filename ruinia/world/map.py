@@ -7,7 +7,7 @@ from world.map_legend import SYMBOLS
 
 class Map(object):
 
-    def __init__(self, caller, max_width=13, max_length=13):
+    def __init__(self, caller, max_width=31, max_length=31):
         self.caller = caller
         self.max_width = max_width
         self.max_length = max_length

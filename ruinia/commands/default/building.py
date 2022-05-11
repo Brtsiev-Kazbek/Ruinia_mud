@@ -453,3 +453,176 @@ class CmdTunnel(COMMAND_DEFAULT_CLASS):
         digstring = "dig%s %s = %s;%s%s" % (
             telswitch, roomname, exitname, exitshort, backstring)
         self.execute_cmd(digstring)
+
+
+# TODO: Двухстороннее связываение улицв
+class CmdOpen(ObjManipCommand):
+    """
+    open a new exit from the current room
+
+    Usage:
+      open <new exit>[;alias;alias..][:typeclass] [,<return exit>[;alias;..][:typeclass]]] = <destination>
+
+    Handles the creation of exits. If a destination is given, the exit
+    will point there. The <return exit> argument sets up an exit at the
+    destination leading back to the current room. Destination name
+    can be given both as a #dbref and a name, if that name is globally
+    unique.
+
+    """
+
+    key = "open"
+    locks = "cmd:perm(open) or perm(Builder)"
+    help_category = "Building"
+
+    new_obj_lockstring = "control:id({id}) or perm(Admin);delete:id({id}) or perm(Admin)"
+    # a custom member method to chug out exits and do checks
+
+    def create_exit(self, exit_name, location, destination, exit_aliases=None, typeclass=None):
+        """
+        Helper function to avoid code duplication.
+        At this point we know destination is a valid location
+
+        """
+        caller = self.caller
+        string = ""
+        # check if this exit object already exists at the location.
+        # we need to ignore errors (so no automatic feedback)since we
+        # have to know the result of the search to decide what to do.
+        exit_obj = caller.search(
+            exit_name, location=location, quiet=True, exact=True)
+        if len(exit_obj) > 1:
+            # give error message and return
+            caller.search(exit_name, location=location, exact=True)
+            return None
+        if exit_obj:
+            exit_obj = exit_obj[0]
+            if not exit_obj.destination:
+                # we are trying to link a non-exit
+                string = "'%s' already exists and is not an exit!\nIf you want to convert it "
+                string += (
+                    "to an exit, you must assign an object to the 'destination' property first."
+                )
+                caller.msg(string % exit_name)
+                return None
+            # we are re-linking an old exit.
+            old_destination = exit_obj.destination
+            if old_destination:
+                string = "Exit %s already exists." % exit_name
+                if old_destination.id != destination.id:
+                    # reroute the old exit.
+                    exit_obj.destination = destination
+                    if exit_aliases:
+                        [exit_obj.aliases.add(alias) for alias in exit_aliases]
+                    string += " Rerouted its old destination '%s' to '%s' and changed aliases." % (
+                        old_destination.name,
+                        destination.name,
+                    )
+                else:
+                    string += " It already points to the correct place."
+
+        else:
+            # exit does not exist before. Create a new one.
+            lockstring = self.new_obj_lockstring.format(id=caller.id)
+            if not typeclass:
+                typeclass = settings.BASE_EXIT_TYPECLASS
+            exit_obj = create.create_object(
+                typeclass,
+                key=exit_name,
+                location=location,
+                aliases=exit_aliases,
+                locks=lockstring,
+                report_to=caller,
+            )
+            if exit_obj:
+                # storing a destination is what makes it an exit!
+                exit_obj.destination = destination
+                string = (
+                    ""
+                    if not exit_aliases
+                    else " (aliases: %s)" % (", ".join([str(e) for e in exit_aliases]))
+                )
+                string = "Created new Exit '%s' from %s to %s%s." % (
+                    exit_name,
+                    location.name,
+                    destination.name,
+                    string,
+                )
+            else:
+                string = "Error: Exit '%s' not created." % exit_name
+        # emit results
+        caller.msg(string)
+        return exit_obj
+
+    def func(self):
+        """
+        This is where the processing starts.
+        Uses the ObjManipCommand.parser() for pre-processing
+        as well as the self.create_exit() method.
+        """
+        caller = self.caller
+
+        if not self.args:  # or not self.rhs:
+            string = "Usage: open <new exit>[;alias...][:typeclass][,<return exit>[;alias..][:typeclass]]] "
+            string += "= <destination>"
+            caller.msg(string)
+            return
+
+        caller.msg(self.rhs)
+        # We must have a location to open an exit
+        location = caller.location
+        if not location:
+            caller.msg("You cannot create an exit from a None-location.")
+            return
+
+        # obtain needed info from cmdline
+
+        exit_name = self.lhs_objs[0]["name"]
+        exit_aliases = self.lhs_objs[0]["aliases"]
+        exit_typeclass = self.lhs_objs[0]["option"]
+        # dest_name = self.rhs
+
+        if exit_name == "север" or exit_name == "с":
+            destination = Room.get_room_at(
+                location.x, location.y + 1, location.z)
+            exit_aliases.append("север" if exit_name == "с" else "с")
+        elif exit_name == "юг" or exit_name == "ю":
+            destination = Room.get_room_at(
+                location.x, location.y - 1, location.z)
+            exit_aliases.append("юг" if exit_name == "ю" else "ю")
+        elif exit_name == "восток" or exit_name == "в":
+            destination = Room.get_room_at(
+                location.x + 1, location.y, location.z)
+            exit_aliases.append("восток" if exit_name == "в" else "в")
+        elif exit_name == "запад" or exit_name == "з":
+            destination = Room.get_room_at(
+                location.x - 1, location.y, location.z)
+            exit_aliases.append("запад" if exit_name == "з" else "з")
+        elif exit_name == "вверх" or exit_name == "вв":
+            destination = Room.get_room_at(
+                location.x, location.y, location.z + 1)
+            exit_aliases.append("вверх" if exit_name == "вв" else "в")
+        elif exit_name == "вниз" or exit_name == "вз":
+            destination = Room.get_room_at(
+                location.x, location.y, location.z - 1)
+            exit_aliases.append("вниз" if exit_name == "вз" else "вз")
+
+            # first, check so the destination exists.
+        # destination = caller.search(dest_name, global_search=True)
+        if not destination:
+            return
+
+        # Create exit
+        ok = self.create_exit(exit_name, location,
+                              destination, exit_aliases, exit_typeclass)
+        if not ok:
+            # an error; the exit was not created, so we quit.
+            return
+        # Create back exit, if any
+        if len(self.lhs_objs) > 1:
+            back_exit_name = self.lhs_objs[1]["name"]
+            back_exit_aliases = self.lhs_objs[1]["aliases"]
+            back_exit_typeclass = self.lhs_objs[1]["option"]
+            self.create_exit(
+                back_exit_name, destination, location, back_exit_aliases, back_exit_typeclass
+            )

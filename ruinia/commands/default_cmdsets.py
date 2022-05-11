@@ -65,6 +65,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
 
         self.remove(default_cmds.CmdTunnel())
         self.remove(default_cmds.CmdDig())
+        self.remove(default_cmds.CmdOpen())
 
         # регистрируем переведенные версии
         self.add(general.CmdHome())
@@ -84,6 +85,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
 
         self.add(building.CmdTunnel())
         self.add(building.CmdDig())
+        self.add(building.CmdOpen())
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):
