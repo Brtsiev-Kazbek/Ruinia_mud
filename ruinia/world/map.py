@@ -102,6 +102,8 @@ class Map(object):
             self.max_width % 2 != 0 else False
 
     def show_map(self):
+        if self.caller.location.name == 'Limbo':
+            return
         map_string = ""
         for row in self.grid:
             map_string += " ".join(row)

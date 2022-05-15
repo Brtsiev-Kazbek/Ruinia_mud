@@ -1,0 +1,1 @@
+evenv\Scripts\activate.bat && cd ruinia && evennia start -l
