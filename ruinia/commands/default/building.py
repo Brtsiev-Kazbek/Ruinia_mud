@@ -2,7 +2,6 @@
 Building and world design commands
 """
 from ast import literal_eval as _LITERAL_EVAL
-from msilib.schema import Error
 import re
 from django.conf import settings
 from django.db.models import Q, Min, Max
