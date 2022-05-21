@@ -280,4 +280,12 @@ class Character(DefaultCharacter):
         destination.msg_contents(string, exclude=(
             self,), from_obj=self, mapping=mapping)
 
+    #
+    # FOR PORTAL
+    #
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('character:sheet', kwargs={'object_id': self.id})
+
     pass

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h1>{{ character.name }}</h1>
+
+    <p>{{ character.db.desc }}</p>
+
+    <h2>Характеристики</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Характеристика</th>
+          <th>Значение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Сила</td>
+          <td>{{ character.db.str }}</td>
+        </tr>
+        <tr>
+          <td>Интеллект</td>
+          <td>{{ character.db.int }}</td>
+        </tr>
+        <tr>
+          <td>Скорость</td>
+          <td>{{ character.db.spd }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Умения</h2>
+    <ul>
+      {% for skill in character.db.skills %}
+        <li>{{ skill }}</li>
+      {% empty %}
+        <li>TODO: создать систему умений.</li>
+      {% endfor %}
+    </ul>
+{% endblock %}

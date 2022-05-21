@@ -33,8 +33,15 @@ from evennia.settings_default import *
 # Evennia base server config
 ######################################################################
 
+DEBUG = True
+
 # This is the name of your game. Make it catchy!
 SERVERNAME = "Ruinia"
+GAME_SLOGAN = "На стадии разработки"
+
+# Connect custom apps
+# INSTALLED_APPS.append('web.character')
+INSTALLED_APPS += ('web.character',)
 
 # Time
 start = datetime(4000, 1, 1)
@@ -44,7 +51,7 @@ TIME_FACTOR = 10.0
 # TIME_GAME_EPOCH = time.mktime(start.timetuple())
 
 
-print(TIME_GAME_EPOCH)
+# print(TIME_GAME_EPOCH)
 
 ######################################################################
 # Settings given in secret_settings.py override those in this file.
