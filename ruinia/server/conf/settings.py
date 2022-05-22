@@ -39,6 +39,63 @@ DEBUG = True
 SERVERNAME = "Ruinia"
 GAME_SLOGAN = "На стадии разработки"
 
+
+######################################################################
+# Evennia WIKI
+######################################################################
+
+INSTALLED_APPS += (
+    'django.contrib.humanize.apps.HumanizeConfig',
+    'django_nyt.apps.DjangoNytConfig',
+    'mptt',
+    'sorl.thumbnail',
+    'wiki.apps.WikiConfig',
+    'wiki.plugins.attachments.apps.AttachmentsConfig',
+    'wiki.plugins.notifications.apps.NotificationsConfig',
+    'wiki.plugins.images.apps.ImagesConfig',
+    'wiki.plugins.macros.apps.MacrosConfig',
+)
+
+# Disable wiki handling of login/signup
+WIKI_ACCOUNT_HANDLING = False
+WIKI_ACCOUNT_SIGNUP_ALLOWED = False
+
+# In server/conf/settings.py
+# ...
+
+
+def is_superuser(article, user):
+    """Return True if user is a superuser, False otherwise."""
+    return not user.is_anonymous and user.is_superuser
+
+
+def is_builder(article, user):
+    """Return True if user is a builder, False otherwise."""
+    return not user.is_anonymous and user.locks.check_lockstring(user, "perm(Builders)")
+
+
+def is_anyone(article, user):
+    """Return True even if the user is anonymous."""
+    return True
+
+
+# Who can create new groups and users from the wiki?
+WIKI_CAN_ADMIN = is_superuser
+# Who can change owner and group membership?
+WIKI_CAN_ASSIGN = is_superuser
+# Who can change group membership?
+WIKI_CAN_ASSIGN_OWNER = is_superuser
+# Who can change read/write access to groups or others?
+WIKI_CAN_CHANGE_PERMISSIONS = is_superuser
+# Who can soft-delete an article?
+WIKI_CAN_DELETE = is_builder
+# Who can lock an article and permanently delete it?
+WIKI_CAN_MODERATE = is_superuser
+# Who can edit articles?
+WIKI_CAN_WRITE = is_builder
+# Who can read articles?
+WIKI_CAN_READ = is_anyone
+
 # Connect custom apps
 # INSTALLED_APPS.append('web.character')
 INSTALLED_APPS += ('web.character',)
