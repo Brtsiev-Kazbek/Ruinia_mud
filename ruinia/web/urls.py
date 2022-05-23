@@ -10,11 +10,12 @@ from django.conf.urls import url, include
 from evennia.web.urls import urlpatterns
 
 # eventual custom patterns
+
 custom_patterns = [
     # url(r'/desired/url/', view, name='example'),
     url(r'^character/', include('web.character.urls')),
     url('notifications/', include('django_nyt.urls')),
-    url('wiki/', include('wiki.urls'))
+    url('wiki/', include('wiki.urls'), name='wiki')
 ]
 
 # this is required by Django.
